@@ -16,12 +16,44 @@ fn Parser::peek(self : Parser) -> Int {
 }
 
 ///|
-fn Parser::skip_space(self : Parser) -> Unit {
-  while self.peek() == 32 ||
-        self.peek() == 9 ||
-        self.peek() == 10 ||
-        self.peek() == 13 {
-    self.pos += 1
+fn Parser::skip_space(self : Parser) -> Unit raise RepairError {
+  while true {
+    while self.peek() == 32 ||
+          self.peek() == 9 ||
+          self.peek() == 10 ||
+          self.peek() == 13 {
+      self.pos += 1
+    }
+    if !self.options.relaxed ||
+      self.peek() != 47 ||
+      self.pos + 1 >= self.source.length() {
+      return
+    }
+    let start = self.pos
+    let next = self.source[self.pos + 1].to_int()
+    if next == 47 {
+      self.pos += 2
+      while self.peek() != -1 && self.peek() != 10 && self.peek() != 13 {
+        self.pos += 1
+      }
+    } else if next == 42 {
+      self.pos += 2
+      while true {
+        if self.peek() == -1 {
+          raise Rejected("UNCLOSED_COMMENT", start)
+        }
+        if self.peek() == 42 &&
+          self.pos + 1 < self.source.length() &&
+          self.source[self.pos + 1].to_int() == 47 {
+          self.pos += 2
+          break
+        }
+        self.pos += 1
+      }
+    } else {
+      return
+    }
+    self.edit(start, self.pos, " ", "REMOVE_COMMENT")
   }
 }
 
@@ -70,7 +102,8 @@ fn Parser::value(self : Parser, depth : Int) -> Unit raise RepairError {
             self.peek() != 32 &&
             self.peek() != 9 &&
             self.peek() != 10 &&
-            self.peek() != 13 {
+            self.peek() != 13 &&
+            self.peek() != 47 {
         self.pos += 1
       }
       let token = self.source[start:self.pos].to_owned()
@@ -113,7 +146,16 @@ fn Parser::object(self : Parser, depth : Int) -> Unit raise RepairError {
         self.pos += 1
         return
       }
-      44 => self.pos += 1
+      44 => {
+        let comma = self.pos
+        self.pos += 1
+        self.skip_space()
+        if self.peek() == 125 && self.options.relaxed {
+          self.edit(comma, comma + 1, "", "TRAILING_COMMA")
+          self.pos += 1
+          return
+        }
+      }
       _ => raise Rejected("EXPECTED_OBJECT_END", self.pos)
     }
   }
@@ -138,7 +180,16 @@ fn Parser::array(self : Parser, depth : Int) -> Unit raise RepairError {
         self.pos += 1
         return
       }
-      44 => self.pos += 1
+      44 => {
+        let comma = self.pos
+        self.pos += 1
+        self.skip_space()
+        if self.peek() == 93 && self.options.relaxed {
+          self.edit(comma, comma + 1, "", "TRAILING_COMMA")
+          self.pos += 1
+          return
+        }
+      }
       _ => raise Rejected("EXPECTED_ARRAY_END", self.pos)
     }
   }
