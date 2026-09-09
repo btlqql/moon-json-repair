@@ -95,10 +95,7 @@ fn Parser::object(self : Parser, depth : Int) -> Unit raise RepairError {
   while true {
     self.skip_space()
     let key_pos = self.pos
-    if self.peek() != 34 {
-      raise Rejected("EXPECTED_KEY", self.pos)
-    }
-    let key = self.string_token()
+    let key = self.key()
     if keys.contains(key) {
       raise Rejected("DUPLICATE_KEY", key_pos)
     }
@@ -167,5 +164,5 @@ pub fn repair(
   if p.peek() != -1 {
     raise Rejected("EXTRA_CONTENT", p.pos)
   }
-  { output: input, edits: p.edits, }
+  { output: apply_edits(input, p.edits), edits: p.edits, }
 }
