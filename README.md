@@ -71,7 +71,9 @@ native 后端需要现代 C 编译器。库覆盖 wasm、wasm-gc、js、native�
 - [设计和安全边界](docs/design.md)
 - [查重与参考来源](docs/provenance.md)
 - [申报前技术事实核对表](docs/applicant-notes.md)（不是代写申报书）
+- [申报书草稿](docs/proposal-draft.md)（AI 辅助草稿，须本人改写确认）
 - [版本记录](CHANGELOG.md)
 
 代码、测试和文档由维护者使用 AI 编程辅助工具开发；参赛者需亲自理解、验证并撰写申报书。
 本仓库不含 Moon Tera 的代码或提交历史。许可证：[Apache-2.0](LICENSE)。
+
