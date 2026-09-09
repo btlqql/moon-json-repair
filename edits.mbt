@@ -60,6 +60,9 @@ fn identifier_start(c : Int) -> Bool {
 
 ///|
 fn Parser::key(self : Parser) -> String raise RepairError {
+  if self.peek() == 39 && self.options.relaxed {
+    return self.single_string()
+  }
   if self.peek() == 34 {
     return self.string_token()
   }

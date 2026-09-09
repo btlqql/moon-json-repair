@@ -59,6 +59,7 @@ fn Parser::value(self : Parser, depth : Int) -> Unit raise RepairError {
     123 => self.object(depth + 1)
     91 => self.array(depth + 1)
     34 => ignore(self.string_token())
+    39 if self.options.relaxed => ignore(self.single_string())
     -1 => raise Rejected("MISSING_VALUE", self.pos)
     _ => {
       let start = self.pos
