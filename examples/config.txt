@@ -1,0 +1,5 @@
+{
+  // Example configuration; comments and trailing commas are intentionally present.
+  server: 'localhost',
+  port: 8080,
+}

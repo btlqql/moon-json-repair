@@ -1,0 +1,5 @@
+import {
+  "btlqql/moon_json_repair" @repair,
+}
+
+pkgtype(kind: "executable")
