@@ -1,0 +1,6 @@
+/_build/
+/.mooncakes/
+/.mooncakes
+/.DS_Store
+*.exe
+*.zip
