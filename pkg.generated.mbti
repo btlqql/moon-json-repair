@@ -1,0 +1,53 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "btlqql/moon_json_repair"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn apply_edits(String, Array[Edit]) -> String raise RepairError
+
+pub fn repair(String, options? : Options) -> RepairResult raise RepairError
+
+pub fn repair_jsonl(String, options? : Options, max_lines? : Int) -> Array[LineResult] raise RepairError
+
+// Errors
+pub(all) suberror RepairError {
+  Rejected(String, Int)
+} derive(Eq, @debug.Debug)
+
+// Types and methods
+pub(all) struct Edit {
+  start : Int
+  end : Int
+  replacement : String
+  code : String
+} derive(Eq, ToJson, @debug.Debug)
+
+pub(all) struct LineResult {
+  line : Int
+  output : String?
+  edits : Array[Edit]
+  error_code : String?
+  error_offset : Int?
+} derive(Eq, ToJson, @debug.Debug)
+
+pub(all) struct Options {
+  relaxed : Bool
+  close_containers : Bool
+  max_input : Int
+  max_depth : Int
+  max_edits : Int
+} derive(Eq, @debug.Debug)
+pub fn Options::conservative() -> Self
+pub fn Options::strict() -> Self
+
+pub(all) struct RepairResult {
+  output : String
+  edits : Array[Edit]
+} derive(Eq, ToJson, @debug.Debug)
+
+// Type aliases
+
+// Traits
