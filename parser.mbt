@@ -146,6 +146,10 @@ fn Parser::object(self : Parser, depth : Int) -> Unit raise RepairError {
         self.pos += 1
         return
       }
+      -1 if self.options.relaxed && self.options.close_containers => {
+        self.edit(self.pos, self.pos, "}", "CLOSE_CONTAINER")
+        return
+      }
       44 => {
         let comma = self.pos
         self.pos += 1
@@ -178,6 +182,10 @@ fn Parser::array(self : Parser, depth : Int) -> Unit raise RepairError {
     match self.peek() {
       93 => {
         self.pos += 1
+        return
+      }
+      -1 if self.options.relaxed && self.options.close_containers => {
+        self.edit(self.pos, self.pos, "]", "CLOSE_CONTAINER")
         return
       }
       44 => {
