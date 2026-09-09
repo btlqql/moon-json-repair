@@ -1,0 +1,8 @@
+supported_targets = "js"
+
+import {
+  "btlqql/moon_json_repair" @repair,
+  "moonbitlang/core/env",
+}
+
+pkgtype(kind: "executable")
