@@ -18,11 +18,4 @@ jobs:
         with:
           node-version: '24'
       - uses: hustcer/setup-moonbit@87e2bdf5cf20d3b6f5c5f266a8a513f503bb5b76
-      - run: moon version --all
-      - run: moon fmt --check
-      - run: moon check --target ${{ matrix.target }} --deny-warn
-      - run: moon build --target ${{ matrix.target }} --deny-warn
-      - run: moon test --target ${{ matrix.target }} --deny-warn
-      - run: moon run examples/basic --target ${{ matrix.target }}
-      - if: matrix.target == 'js'
-        run: node scripts/test-cli.mjs
+      - run: node scripts/verify.mjs --target ${{ matrix.target }}

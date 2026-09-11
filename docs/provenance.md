@@ -2,6 +2,14 @@
 
 Checked on 2026-09-09. Search results can change and are not proof of absence.
 
+Correction on 2026-09-11: the earlier review omitted the directly relevant
+[tiye/json5](https://github.com/worktools/json5.mbt), published as
+[tiye/json5@0.0.3](https://mooncakes.io/docs/tiye/json5@0.0.3) under Apache-2.0.
+Its JSON5 input support overlaps with this project's bare-key, single-quote,
+comment and trailing-comma handling. Those features alone are not differentiation.
+See [the comparison and runnable evidence](json5-comparison.md). This correction
+does not establish that the organizer accepts the proposed differentiation.
+
 - MoonCakes live search: `jsonrepair`, `json-repair`, `repair`, `json5`, `hjson`.
   No dedicated `jsonrepair` module was found in the returned results. Fuzzy JSON
   searches returned capped results, so they cannot be called exhaustive.

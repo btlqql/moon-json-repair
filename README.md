@@ -46,11 +46,21 @@ JSONL 模式始终输出每行报告，失败行不会被删除。退出码：0 
 
 ## 作为库使用
 
-模块名为 `btlqql/moon_json_repair`。发布状态请以 MoonCakes 页面为准；
-发布成功后安装命令为 `moon add btlqql/moon_json_repair@0.1.0`。
+模块名为 `btlqql/moon_json_repair`。[0.1.0 已发布](https://mooncakes.io/docs/btlqql/moon_json_repair@0.1.0)，
+已完成独立下载安装验证。安装命令为 `moon add btlqql/moon_json_repair@0.1.0`。
 接口与契约见 [README.mbt.md](README.mbt.md)。
 
 ## 验证
+
+推荐统一入口（需要 Node.js 24 和 MoonBit）：
+
+```sh
+node scripts/verify.mjs --target js
+```
+
+目标可选 wasm、wasm-gc、js、native；失败时打印具体命令并立即停止。
+工具链、原提交 CI 证据和待确认问题见[复现说明](docs/reproduction.md)。
+以下为分步命令；native 需要现代 C 编译器：
 
 ```sh
 moon fmt --check
@@ -68,11 +78,14 @@ native 后端需要现代 C 编译器。库覆盖 wasm、wasm-gc、js、native�
 
 ## 工程与来源
 
+- [JSON5 重叠与可运行差异证据](docs/json5-comparison.md)（承认与 tiye/json5 的语法重叠）
+- [原文编辑与回放示例](examples/audit/main.mbt)：`moon run examples/audit --target js`
+- [测试复现说明](docs/reproduction.md)
 - [设计和安全边界](docs/design.md)
 - [查重与参考来源](docs/provenance.md)
 - [申报前技术事实核对表](docs/applicant-notes.md)（不是代写申报书）
 - [人工申报准备清单](docs/proposal-draft.md)（AI 技术资料，不是正式申报书）
-- [项目申报书底稿](docs/proposal.md)（AI 辅助底稿，提交前由本人改写确认）
+- [项目申报书技术校订稿](docs/proposal.md)（仍需本人撰写完成，不可直接提交）
 - [九月赛事提交核对表](docs/submission-checklist.md)
 - [版本记录](CHANGELOG.md)
 
