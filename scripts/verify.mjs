@@ -28,5 +28,8 @@ for (const stage of ['check', 'build', 'test']) {
 for (const example of ['examples/basic', 'examples/audit']) {
   run('moon', ['run', example, '--target', target]);
 }
-if (target === 'js') run(process.execPath, ['scripts/test-cli.mjs']);
+if (target === 'js') {
+  run(process.execPath, ['scripts/test-cli.mjs']);
+  run(process.execPath, ['scripts/test-import-scenario.mjs']);
+}
 console.log(`Verification passed: ${target}`);

@@ -30,6 +30,17 @@ assert.equal(rows[0].line, 1);
 assert.equal(rows[1].output, undefined);
 assert.equal(typeof rows[1].error_code, 'string');
 assert.equal(rows[1].line, 2);
+r = run(['--jsonl', '--summary'], '{a:1}\n{"b":2}\n{bad:}\n');
+assert.equal(r.status, 1);
+assert.deepEqual(JSON.parse(r.stderr), {
+  lines:3, accepted:2, repaired:1, unchanged:1, rejected:1, edits:1,
+});
+assert.equal(run(['--summary'], '{}').status, 2);
+const splitUtf8 = '{"x":"' + 'x'.repeat(65529) + '😀"}\n';
+r = run(['--jsonl'], splitUtf8);
+assert.equal(r.status, 0);
+assert.equal(JSON.parse(JSON.parse(r.stdout).output).x.endsWith('😀'), true);
+assert.equal(run(['--jsonl'], Buffer.from([0xff])).status, 2);
 r = run([], '{secret:');
 assert.equal(r.status, 1);
 assert.equal(r.stderr.includes('secret'), false);
