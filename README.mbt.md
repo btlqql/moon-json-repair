@@ -30,6 +30,8 @@ The source repository contains this working example in `examples/basic`.
 - `repair(input, options?) -> RepairResult raise RepairError`
 - `apply_edits(input, edits) -> String raise RepairError`
 - `repair_jsonl(input, options?, max_lines?) -> Array[LineResult] raise RepairError`
+- `JsonlProcessor::new(options?, max_lines?, max_line?) -> JsonlProcessor`
+- `JsonlProcessor::push(chunk)`, `finish()`, and `summary()`
 - `Options::conservative()` and `Options::strict()`
 
 `RepairResult` contains output and edits. An `Edit` has start/end (half-open
@@ -39,10 +41,13 @@ Replay validates ranges and refuses overlaps and surrogate-pair splitting.
 Edits are NOT bound cryptographically to their source; callers must retain and
 use the exact original input. Do not apply them to a different revision.
 
-Default limits: 1,048,576 UTF-16 code units, depth 128 (configurable 1..256),
-10,000 edits, 10,000 JSONL lines. JSONL enforces the input limit on the whole batch.
-CLI additionally caps bytes read at 4 MiB and rejects malformed UTF-8.
-This implementation buffers input; it is not an unbounded streaming parser.
+Default repair limits: 1,048,576 UTF-16 code units, depth 128 (configurable
+1..256), and 10,000 edits. The batch JSONL API retains a 10,000-line default
+and bounds the whole input. `JsonlProcessor` instead retains only the current
+line, defaults to 1,000,000 lines and 1,048,576 code units per line, and emits
+an explicit `LINE_INPUT_LIMIT` result before continuing with later lines.
+The Node CLI streams JSONL in decoded 64 KiB byte chunks; non-JSONL CLI input
+remains capped at 4 MiB. Malformed UTF-8 is rejected in both modes.
 
 `relaxed` enables bare ASCII identifier keys, single-quoted strings, comments,
 and trailing commas. `close_containers` defaults false and only works when
@@ -55,6 +60,7 @@ Failures raise `Rejected(code, offset)` without echoing source data. JSONL repor
 line-local offsets and one-based physical line numbers; a trailing newline is
 not an extra record. Blank interior lines fail. In JSON reports, absent optional
 fields are omitted: success has `output`, failure has `error_code/error_offset`.
+`JsonlSummary` reports lines, accepted, repaired, unchanged, rejected, and edits.
 
 Repair success only establishes JSON syntax. It does not establish original
 intent, schema validity, authorization, or safe tool arguments. Review edits and

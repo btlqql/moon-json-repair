@@ -25,6 +25,36 @@ pub(all) struct Edit {
   code : String
 } derive(Eq, ToJson, @debug.Debug)
 
+pub struct JsonlProcessor {
+  options : Options
+  max_lines : Int
+  max_line : Int
+  mut pending : String
+  mut overlong : Bool
+  mut saw_input : Bool
+  mut ended_with_lf : Bool
+  mut finished : Bool
+  mut lines : Int
+  mut accepted : Int
+  mut repaired : Int
+  mut unchanged : Int
+  mut rejected : Int
+  mut edits : Int
+}
+pub fn JsonlProcessor::finish(Self) -> Array[LineResult] raise RepairError
+pub fn JsonlProcessor::new(options? : Options, max_lines? : Int, max_line? : Int) -> Self raise RepairError
+pub fn JsonlProcessor::push(Self, String) -> Array[LineResult] raise RepairError
+pub fn JsonlProcessor::summary(Self) -> JsonlSummary
+
+pub(all) struct JsonlSummary {
+  lines : Int
+  accepted : Int
+  repaired : Int
+  unchanged : Int
+  rejected : Int
+  edits : Int
+} derive(Eq, ToJson, @debug.Debug)
+
 pub(all) struct LineResult {
   line : Int
   output : String?
