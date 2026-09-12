@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.2.0 — incremental JSONL import, unreleased
+## 0.2.0 — incremental JSONL import, 2026-09-12
 
 - Add a bounded incremental `JsonlProcessor` with per-line failure isolation and aggregate statistics.
 - Stream JSONL input in 64 KiB decoded chunks in the Node CLI instead of buffering the whole file.

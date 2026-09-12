@@ -50,9 +50,9 @@ JSONL 模式按 64 KiB 字节块增量解码，只保留当前行；始终输出
 
 ## 作为库使用
 
-模块名为 `btlqql/moon_json_repair`。[0.1.1 已发布](https://mooncakes.io/docs/btlqql/moon_json_repair@0.1.1)，
-已完成独立下载安装验证。安装命令为 `moon add btlqql/moon_json_repair@0.1.1`。
-已安装旧版时使用 `moon add --upgrade btlqql/moon_json_repair@0.1.1`。
+模块名为 `btlqql/moon_json_repair`。[0.2.0 已发布](https://mooncakes.io/docs/btlqql/moon_json_repair@0.2.0)，
+已完成独立下载安装验证。安装命令为 `moon add btlqql/moon_json_repair@0.2.0`。
+已安装旧版时使用 `moon add --upgrade btlqql/moon_json_repair@0.2.0`。
 接口与契约见 [README.mbt.md](README.mbt.md)。
 
 ## 验证
