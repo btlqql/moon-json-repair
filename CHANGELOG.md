@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased — review evidence, 2026-09-11
+## 0.1.1 — review evidence, 2026-09-12
 
 - Correct the ecosystem review to include tiye/json5 and explicitly acknowledge overlap.
 - Add an audit example and three contract tests for existing source-preservation/replay/refusal behavior.

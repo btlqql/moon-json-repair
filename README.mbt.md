@@ -6,7 +6,7 @@ No claim of full JSON5 or jsonrepair compatibility.
 
 ## Consumer example
 
-After adding `btlqql/moon_json_repair@0.1.0`, import it in your `moon.pkg`:
+After adding `btlqql/moon_json_repair@0.1.1`, import it in your `moon.pkg`:
 
 ```text
 import {

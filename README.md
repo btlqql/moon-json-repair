@@ -46,8 +46,9 @@ JSONL 模式始终输出每行报告，失败行不会被删除。退出码：0 
 
 ## 作为库使用
 
-模块名为 `btlqql/moon_json_repair`。[0.1.0 已发布](https://mooncakes.io/docs/btlqql/moon_json_repair@0.1.0)，
-已完成独立下载安装验证。安装命令为 `moon add btlqql/moon_json_repair@0.1.0`。
+模块名为 `btlqql/moon_json_repair`。[0.1.1 已发布](https://mooncakes.io/docs/btlqql/moon_json_repair@0.1.1)，
+已完成独立下载安装验证。安装命令为 `moon add btlqql/moon_json_repair@0.1.1`。
+已安装旧版时使用 `moon add --upgrade btlqql/moon_json_repair@0.1.1`。
 接口与契约见 [README.mbt.md](README.mbt.md)。
 
 ## 验证
