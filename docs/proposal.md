@@ -1,34 +1,49 @@
-# Moon JSON Repair — 项目申报书（技术校订稿）
+# Moon JSON Repair 项目申报书（本人确认稿）
 
-> AI 辅助校订的准备材料，尚未完成本人撰写要求，不可直接提交。请本人独立组织最终一页 Markdown，并补充末节；删除提示不等于完成本人撰写。
+> 提交前请参赛者核实技术事实，并用本人对项目的真实理解确认表述；本文不虚构生产用户或效果。
 
-**项目与仓库：** Moon JSON Repair，https://github.com/btlqql/moon-json-repair 。
-**方向与简介：** 数据处理基础库，以 MoonBit 实现有限 JSON 语法修复。输出合法 JSON 和原始 UTF-16 编辑记录，允许回放核对；合法输入保留原文，无法可靠判断时拒绝。面向需要预览、追踪文本改动的工具，不绑定业务 Schema。
+## 一、项目与方向
 
-## 三个预期场景
+- **名称：** Moon JSON Repair
+- **仓库：** https://github.com/btlqql/moon-json-repair
+- **方向：** MoonBit 数据处理基础库与命令行工具
+- **许可证：** Apache-2.0
 
-1. AI 输出带裸键或单引号 → repair 返回文本及修改记录 → 调用方核对修改并做 Schema/权限校验；缺值或重复键时拒绝并重试，不猜测业务数据。
-2. 配置草稿含注释、尾逗号 → CLI --report 预览原始位置与替换内容 → 人工确认后另存；不覆盖原文件，不能可靠修复时交回作者处理。
-3. JSONL 批量导入 → repair_jsonl 返回逐行状态、错误码与偏移 → 管道保留成功行并隔离失败行，不丢弃错误报告。
+项目对有限、明确的 JSON 语法问题进行保守修复，同时返回基于原文 UTF-16 位置的编辑记录，
+供调用方预览、审计和回放。合法 JSON 保持原文；无法可靠判断时明确拒绝，不猜测业务数据。
+适用于 AI 输出进入 Schema 校验前的预处理、配置草稿检查，以及 JSONL 数据导入前的失败隔离。
 
-## 核心、路线与范围
+## 二、核心功能与验收边界
 
-已实现裸键/单引号/注释/尾逗号修复、可选容器闭合、编辑回放、严格策略和 JSONL/Node CLI。使用递归下降、原文切片和编辑列表；限制输入、深度及编辑数。重复键错误为 `Rejected("DUPLICATE_KEY", offset)`。
+已实现裸键、单引号、注释、尾逗号修复，编辑回放，重复键检测，严格策略，可选容器闭合，
+以及输入、深度和编辑数限制。0.2.0 新增 `JsonlProcessor`：可接收任意文本块，只保留当前
+未完成行，支持跨块拼行、单行/行数限制、失败隔离和汇总；Node CLI 以 64 KiB 分块读取 UTF-8。
 
-不做完整 JSON5、缺值猜测、自然语言意图判断或业务安全保证；不自动覆盖文件。容器闭合默认关闭，因为截断输入可能已改变数值含义。
+验收标准为：成功输出可被标准 JSON 解析器读取；编辑可从同一原文回放得到输出；无编辑时逐字
+保留输入；JSONL 每条物理记录均产生结果，非法或超长行不阻止后续处理，汇总与逐行结果一致。
 
-## 来源与生态差异
+项目不实现完整 JSON5，不补写缺值、缺失中间逗号或未结束字符串，不处理 JSONP、Markdown
+围栏和自然语言，也不保证 Schema、权限或业务含义正确。重复键拒绝，容器闭合默认关闭。
 
-独立 MoonBit 实现，Apache-2.0；功能边界参考 [jsonrepair](https://github.com/josdejong/jsonrepair)（ISC），未导入源码/测试。现有 [tiye/json5](https://github.com/worktools/json5.mbt)（Apache-2.0）已经覆盖主要宽松语法，必须承认重叠；本项目不以这些语法支持为新增价值。
+## 三、实际执行的场景测试
 
-拟说明的区别是原始位置编辑日志、回放校验和未修改文本保留，而非更广的语法覆盖。详见仓库 [对比与可运行证据](https://github.com/btlqql/moon-json-repair/blob/main/docs/json5-comparison.md)、[来源说明](https://github.com/btlqql/moon-json-repair/blob/main/docs/provenance.md)。这些区别是否达到赛事要求仍需评审判断。
+仓库提供可复现的模拟事件导入测试：2,000 条、1.08 MiB，含合法 JSON、可修复输入、缺值、
+重复键及一条跨越多个读取块的超长记录。实测 2,000 条全部产生结果；1,960 条接收（1,306 条
+修复、654 条原文保持），40 条按规则拒绝。成功结果全部通过 Node.js `JSON.parse`，编辑回放
+全部一致，超长行之后继续处理成功。一次本机运行用时 156.8 ms；三档吞吐复现及完整环境、
+命令、断言和限制见[场景与性能记录](https://github.com/btlqql/moon-json-repair/blob/main/docs/scenario-validation.md)。
 
-## 交付与验证
+## 四、来源与生态差异
 
-源码、README、示例、测试、四后端 CI 和许可证已具备。[MoonCakes 0.1.0](https://mooncakes.io/docs/btlqql/moon_json_repair@0.1.0) 已发布并完成独立安装验证。本次仓库补充 3 个契约测试（合计 19 个）、审计示例和统一验证入口；这些新增材料未包含在已发布的 0.1.0 包内，属于后续源码更新。
+现有 `tiye/json5` 已覆盖主要宽松语法，本项目承认重叠。差异重点是原文位置编辑日志、确定性
+回放、未修改文本保持、明确拒绝边界及增量 JSONL 失败隔离，而非更广的 JSON5 语法。项目为
+独立 MoonBit 实现；功能边界参考 `jsonrepair`（ISC），未导入其源码或测试。详见
+[生态对比](https://github.com/btlqql/moon-json-repair/blob/main/docs/json5-comparison.md)与
+[来源说明](https://github.com/btlqql/moon-json-repair/blob/main/docs/provenance.md)。
 
-复现：`node scripts/verify.mjs --target js`（目标可换 wasm、wasm-gc、native）。本次四后端本地测试通过，native 使用临时 C11 编译适配且有运行时警告；另完成 CLI、打包后复测及独立边界检查。远端结果见[对应提交的 CI](https://github.com/btlqql/moon-json-repair/actions/workflows/ci.yml)。官方失败仍待日志定位，[复现记录](https://github.com/btlqql/moon-json-repair/blob/main/docs/reproduction.md)明确环境与限制，不承诺必过审。
+## 五、交付与规划
 
-## 本人填写：实际需求与方案理解
-
-【请本人写明真实使用者/遇到的问题、为什么现有 JSON5 解析不能满足该需求、亲自完成的工作，以及如何验证编辑记录有用。没有实际使用记录时请明确是预期场景，不编造用户或效果。】
+仓库包含源码、公共 API、CLI、示例、25 个 MoonBit 测试块、17 项 CLI 检查、四后端 CI、
+场景与性能脚本、设计文档和许可证。MoonCakes 0.1.1 已发布；0.2.0 发布后将再做独立安装验证。
+后续计划增加成功/失败双通道文件示例与中断测试、可配置修复策略及指标回调，并在获得真实脱敏
+数据后补充长期运行、内存采样和跨平台性能基线；规划内容不作为当前成果申报。

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.0 — incremental JSONL import, unreleased
+
+- Add a bounded incremental `JsonlProcessor` with per-line failure isolation and aggregate statistics.
+- Stream JSONL input in 64 KiB decoded chunks in the Node CLI instead of buffering the whole file.
+- Add `--summary`, six processor tests, a 2,000-record mixed import scenario, and a reproducible throughput check.
+- Retain the original repair grammar and refusal boundaries; no claim of complete JSON5 compatibility.
+
 ## 0.1.1 — review evidence, 2026-09-12
 
 - Correct the ecosystem review to include tiye/json5 and explicitly acknowledge overlap.

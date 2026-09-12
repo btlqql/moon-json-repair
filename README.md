@@ -30,6 +30,7 @@ cd moon-json-repair
 moon run examples/basic --target js
 moon run cmd/main --target js -- --report examples/config.txt
 moon run cmd/main --target js -- --jsonl examples/events.jsonl
+moon run cmd/main --target js -- --jsonl --summary examples/events.jsonl
 ```
 
 最后一个示例故意包含一条错误记录，退出码为 1。可先构建后直接运行：
@@ -42,7 +43,10 @@ node _build/js/debug/build/cmd/main/main.js --report examples/config.txt
 
 不指定路径或指定 `-` 时读取 UTF-8 标准输入。只输出到 stdout/stderr，**不覆盖原文件**。
 `--strict` 禁用修复；`--close-containers` 显式允许容器补全；`--report` 输出修改记录。
-JSONL 模式始终输出每行报告，失败行不会被删除。退出码：0 全部成功，1 拒绝/部分失败，2 参数或 IO 错误。
+JSONL 模式按 64 KiB 字节块增量解码，只保留当前行；始终输出每行报告，失败行不会被删除。
+`--summary` 在 stderr 输出接收、修复、未修改、拒绝及编辑数统计。单行默认上限 1,048,576
+个 UTF-16 码元，超限行报告 `LINE_INPUT_LIMIT`，后续行继续处理。退出码：0 全部成功，
+1 拒绝/部分失败，2 参数或 IO 错误。
 
 ## 作为库使用
 
@@ -70,11 +74,15 @@ moon build --target all --deny-warn
 moon test --target all --deny-warn
 moon run examples/basic --target js
 node scripts/test-cli.mjs
+node scripts/test-import-scenario.mjs
+node scripts/benchmark-jsonl.mjs
 moon package --list
 ```
 
 native 后端需要现代 C 编译器。库覆盖 wasm、wasm-gc、js、native；CLI 仅支持 JS/Node。
-测试包含 3000 个确定性生成输入、100 个成功修复组合、Unicode/边界/拒绝案例及 13 项 CLI 集成检查。
+测试包含 3000 个确定性生成输入、100 个成功修复组合、Unicode/边界/拒绝案例、
+25 个 MoonBit 测试块及 17 项 CLI 集成检查。另有 2,000 条混合 JSONL 的端到端场景测试，
+验证跨块读取、逐行守恒、编辑回放、超长行隔离和后续继续处理。
 数量是测试输入数量，不代表独立的人工测试用例，也不代表已经覆盖所有 JSON 异常。
 
 ## 工程与来源
@@ -82,6 +90,7 @@ native 后端需要现代 C 编译器。库覆盖 wasm、wasm-gc、js、native�
 - [JSON5 重叠与可运行差异证据](docs/json5-comparison.md)（承认与 tiye/json5 的语法重叠）
 - [原文编辑与回放示例](examples/audit/main.mbt)：`moon run examples/audit --target js`
 - [测试复现说明](docs/reproduction.md)
+- [JSONL 导入场景与性能记录](docs/scenario-validation.md)
 - [设计和安全边界](docs/design.md)
 - [查重与参考来源](docs/provenance.md)
 - [申报前技术事实核对表](docs/applicant-notes.md)（不是代写申报书）
